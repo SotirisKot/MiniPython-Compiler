@@ -19,9 +19,12 @@ Tokens
 	minus = '-';
 	mult = '*';
 	dmult = '**';
+	mineq = '-=';
+	diveq = '/=';
 	div = '/';
 	dot = '.';
 	eq = '=';
+	deq = '==';
 	exclam = '!';
 	dictt = 'dict';
 	def = 'def';
@@ -40,11 +43,14 @@ Tokens
 	for = 'for';
 	from = 'from';
 	import = 'import';
+	assert = 'assert';
 	as = 'as';
 	print = 'print';
 	return = 'return';
+	in = 'in';
 	less = '<';
 	great = '>';
+	dif = '!=';
 	true = 'true';
 	semi = ':';
 	false = 'false';
