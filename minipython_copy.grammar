@@ -63,3 +63,12 @@ Tokens
 
 Ignored Tokens
 	blank, line_comment;
+
+Productions
+	goal = commands*;
+	commands = {func}function | {state}statement;
+	module = {simple} id | {complex} module dot;
+	function = def id l_par argument? r_par semi statement;
+	argument = {simple} id | {val} id eq value | {recursive} id comma argument;
+	statement = l_par;
+	value = eq;
