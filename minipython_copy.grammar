@@ -42,7 +42,7 @@ Tokens
 	while = 'while';
 	for = 'for';
 	from = 'from';
-	import = 'import';
+	imp = 'import';
 	assert = 'assert';
 	as = 'as';
 	print = 'print';
@@ -70,5 +70,21 @@ Productions
 	module = {simple} id | {complex} module dot;
 	function = def id l_par argument? r_par semi statement;
 	argument = {simple} id | {val} id eq value | {recursive} id comma argument;
-	statement = l_par;
+	
+	statement = {if} [tab1]:tab* if [comp1]:comparison [semi1]:semi [st1]:statement|
+			  	{while} [tab2]:tab* while [comp2]:comparison [semi2]:semi [st2]:statement|
+				{for} [tab3]:tab* for [id1]:id in [id2]:id [semi3]:semi [st3]:statement|
+				{return} [tab4]:tab* return [exp1]:expression|
+				{print_simple} [tab5]:tab* [prnt1]:print [exp2]:expression |
+				{print_complx} [tab6]:tab* [prnt2]:print [exp3]:expression comma [exp4]:expression|
+				{equals} [tab7]:tab* [id3]:id [eq1]:eq [exp5]:expression|
+				{subeq} [tab8]:tab* [id4]:id mineq [exp6]:expression|
+				{diveq} [tab9]:tab* [id5]:id diveq [exp7]:expression|
+				{list} [tab10]:tab* [id6]:id l_br [exp8]:expression r_br [eq2]:eq [exp9]:expression|
+				{funccall} [tab11]:tab* function_call|
+				{import} import;
 	value = eq;
+	import = imp module;
+	comparison = less;
+	expression = id;
+	function_call = great;
