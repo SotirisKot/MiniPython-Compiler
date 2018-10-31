@@ -67,7 +67,7 @@ Ignored Tokens
 Productions
 	goal = commands*;
 	commands = {func}function | {state}statement;
-	module = {simple} id | {complex} module dot;
+	module = {simple} id | {complex} id dot module;
 	function = def id l_par argument? r_par semi statement;
 	argument = {simple} id | {val} id eq value | {recursive} id comma argument;
 	
@@ -84,7 +84,14 @@ Productions
 				{funccall} [tab11]:tab* function_call|
 				{import} import;
 	value = {func_call} id dot function_call | {number} number | {string} string;
+	
+	function_call = id l_par arglist? r_par;
+	arglist = {simple} [exp1]:expression | {recursion} [exp2]:expression comma arglist;
+	comparison = {great} [exp1]:expression great [exp2]:expression |
+				 {less} [exp3]:expression less [exp4]:expression |
+				 {dif} [exp5]:expression dif [exp6]:expression |
+				 {eq} [exp7]:expression deq [exp8]:expression |
+				 {true} true |
+				 {false} false;
 	import = imp module;
-	comparison = less;
 	expression = id;
-	function_call = great;
