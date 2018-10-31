@@ -94,4 +94,4 @@ Productions
 				 {true} true |
 				 {false} false;
 	import = imp module;
-	expression = id;
+	expression = {tes1} [id3]:id | {test2}[id1]:id plus [id2]:id | {test3} [num1]:number | {test4} [num2]:number plus [num3]:number;
