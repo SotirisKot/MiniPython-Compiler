@@ -83,7 +83,7 @@ Productions
 				{list} [tab10]:tab* [id6]:id l_br [exp8]:expression r_br [eq2]:eq [exp9]:expression|
 				{funccall} [tab11]:tab* function_call|
 				{import} import;
-	value = eq;
+	value = {func_call} id dot function_call | {number} number | {string} string;
 	import = imp module;
 	comparison = less;
 	expression = id;
