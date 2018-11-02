@@ -67,9 +67,12 @@ Ignored Tokens
 Productions
 	goal = commands*;
 	commands = {func}function | {state}statement;
-	module = {simple} id | {complex} id dot module;
+	identifier_dot = id dot;
+	module = identifier_dot* id;
 	function = def id l_par argument? r_par semi statement;
-	argument = {simple} id | {val} id eq value | {recursive} id comma argument;
+	equal_value = eq value;
+	comma_identifier = comma id equal_value?;
+	argument = id equal_value? comma_identifier*;
 	
 	statement = {if} [tab1]:tab* if [comp1]:comparison [semi1]:semi [st1]:statement|
 			  	{while} [tab2]:tab* while [comp2]:comparison [semi2]:semi [st2]:statement|
@@ -86,12 +89,16 @@ Productions
 	value = {func_call} id dot function_call | {number} number | {string} string;
 	
 	function_call = id l_par arglist? r_par;
-	arglist = {simple} [exp1]:expression | {recursion} [exp2]:expression comma arglist;
+	comma_expression = comma expression;
+	arglist = expression comma_expression*;
 	comparison = {great} [exp1]:expression great [exp2]:expression |
 				 {less} [exp3]:expression less [exp4]:expression |
 				 {dif} [exp5]:expression dif [exp6]:expression |
 				 {eq} [exp7]:expression deq [exp8]:expression |
 				 {true} true |
 				 {false} false;
-	import = imp module;
+	as_identifier = as id;
+	comma_module_as_id = comma module as_identifier?;
+	import = {import_as} imp module as_identifier? comma_module_as_id* |
+			 {from_import} ;
 	expression = {tes1} [id3]:id | {test2}[id1]:id plus [id2]:id | {test3} [num1]:number | {test4} [num2]:number plus [num3]:number;
