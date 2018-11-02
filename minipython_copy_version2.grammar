@@ -99,6 +99,7 @@ Productions
 				 {false} false;
 	as_identifier = as id;
 	comma_module_as_id = comma module as_identifier?;
-	import = {import_as} imp module as_identifier? comma_module_as_id* |
-			 {from_import} ;
+	comma_id_as_id = comma id as_identifier?;
+	import = {import_as} [imp1]:imp [module1]:module as_identifier? comma_module_as_id* |
+			 {from_import} from [module2]:module [imp2]:imp id as_identifier? comma_id_as_id*;
 	expression = {tes1} [id3]:id | {test2}[id1]:id plus [id2]:id | {test3} [num1]:number | {test4} [num2]:number plus [num3]:number;
