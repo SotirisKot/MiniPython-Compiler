@@ -9,6 +9,7 @@ Helpers
 	letter = ['a' .. 'z']|['A' .. 'Z']; 
 	cr = 13; 
 	lf = 10;
+	space = 32;
 	all = [0..127]; 
 	eol = lf | cr | cr lf ;
 	not_eol = [all - [cr + lf]]; 
@@ -57,49 +58,116 @@ Tokens
 	quote = '"';
 	blank = (' ' | lf | cr);
 	line_comment = '#' not_eol* eol; 
-	number = digit+ | (digit+ '.' digit+);
+	//number = digit+ | (digit+ '.' digit+);
 	id = letter (letter | digit)*;
-	string = '"'not_eol* '"';
-
+	float = digit* '.' digit+;
+	integer = ([digit-'0'] digit* | '0');
+	string = '"'(letter|space)*'"'|'''(letter|space)*''';
+	
 Ignored Tokens
 	blank, line_comment;
 
 Productions
 	goal = commands*;
-	commands = {func}function | {state}statement;
-	identifier_dot = id dot;
-	module = identifier_dot* id;
-	function = def id l_par argument? r_par semi statement;
-	equal_value = eq value;
-	comma_identifier = comma id equal_value?;
-	argument = id equal_value? comma_identifier*;
 	
-	statement = {if} [tab1]:tab* if [comp1]:comparison [semi1]:semi [st1]:statement|
-			  	{while} [tab2]:tab* while [comp2]:comparison [semi2]:semi [st2]:statement|
-				{for} [tab3]:tab* for [id1]:id in [id2]:id [semi3]:semi [st3]:statement|
-				{return} [tab4]:tab* return [exp1]:expression|
-				{print_simple} [tab5]:tab* [prnt1]:print [exp2]:expression |
-				{print_complx} [tab6]:tab* [prnt2]:print [exp3]:expression comma [exp4]:expression|
-				{equals} [tab7]:tab* [id3]:id [eq1]:eq [exp5]:expression|
-				{subeq} [tab8]:tab* [id4]:id mineq [exp6]:expression|
-				{diveq} [tab9]:tab* [id5]:id diveq [exp7]:expression|
-				{list} [tab10]:tab* [id6]:id l_br [exp8]:expression r_br [eq2]:eq [exp9]:expression|
-				{funccall} [tab11]:tab* function_call|
+	commands = {func}function | {state}statement;
+	
+	identifier_dot = id dot;
+	
+	module = identifier_dot* id;
+	
+	function = def id l_par argument? r_par semi statement;
+	
+	equal_value = eq value;
+	
+	comma_identifier = comma id equal_value?;
+	
+	argument = id equal_value? comma_identifier*;	
+	
+	statement = {if} tab* if comparison semi statement|
+			  	{while} tab* while comparison semi statement|
+				{for} tab* for [id1]:id in [id2]:id semi statement|
+				{return} tab* return expression|
+				{print_simple} tab* print expression comma_expression* |
+				{equals} tab* id eq expression|
+				{subeq} tab* id mineq expression|
+				{diveq} tab* id diveq expression|
+				{list} tab* id l_br [exp8]:expression r_br eq [exp9]:expression|
+				{assert} assert expression comma_expression?|
+				{funccall} tab* function_call|
 				{import} import;
+				
+	sign = {neg} minus | {pos} plus;
+	number = {integer} sign? integer|{float} sign? float;	
+				
 	value = {func_call} id dot function_call | {number} number | {string} string;
 	
 	function_call = id l_par arglist? r_par;
+	
 	comma_expression = comma expression;
+	
+	comma_value = comma value;
+	
 	arglist = expression comma_expression*;
+	
 	comparison = {great} [exp1]:expression great [exp2]:expression |
 				 {less} [exp3]:expression less [exp4]:expression |
 				 {dif} [exp5]:expression dif [exp6]:expression |
 				 {eq} [exp7]:expression deq [exp8]:expression |
 				 {true} true |
 				 {false} false;
+				 
 	as_identifier = as id;
+	
 	comma_module_as_id = comma module as_identifier?;
+	
 	comma_id_as_id = comma id as_identifier?;
+	
 	import = {import_as} [imp1]:imp [module1]:module [as_id1]:as_identifier? comma_module_as_id* |
 			 {from_import} from [module2]:module [imp2]:imp id [as_id2]:as_identifier? comma_id_as_id*;
-	expression = {tes1} [id3]:id | {test2}[id1]:id plus [id2]:id | {test3} [num1]:number | {test4} [num2]:number plus [num3]:number;
+	
+	more_values = {more_values} value comma_value* ;
+
+	expression = {multiplication} mult_or_div |
+				 {addition} expression plus mult_or_div|
+				 {subtraction} expression minus mult_or_div;				   	
+					
+	mult_or_div = {pow} power |
+						  	{multiplication} mult_or_div mult power|
+							{division} mult_or_div div power;
+	
+	power = {smth} something |
+						  {power} power dmult something;
+
+	something = {id} id |
+			  	{val} value |
+				{func_call} function_call |
+				{par_exp} l_par expression r_par |
+				{br_exp} l_br more_values* r_br |
+				{id2} id l_br expression r_br;
+
+
+
+				 
+	
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+				
+				
