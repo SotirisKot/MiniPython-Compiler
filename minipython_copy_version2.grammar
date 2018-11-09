@@ -94,6 +94,7 @@ Productions
 				{diveq} tab* id diveq expression|
 				{list} tab* id l_br [exp8]:expression r_br eq [exp9]:expression|
 				{assert} assert expression comma_expression?|
+				{assert_comparison} assert comparison comma_expression?|
 				{funccall} tab* function_call|
 				{import} import;
 				
