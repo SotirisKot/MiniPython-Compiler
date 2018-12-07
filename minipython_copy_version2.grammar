@@ -150,7 +150,18 @@ Productions
 
 
 				 
+	Abstract Syntax Tree
+				 
+		goal = commands*;
 	
+		commands = {func} function |
+			   {stmt} statement;
+	
+		function = id argument* statement;
+	
+		argument = id value* id_value*;
+	
+		id_value = id value*;
 	
 
 	
