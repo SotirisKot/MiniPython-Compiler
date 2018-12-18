@@ -68,84 +68,84 @@ Ignored Tokens
 	blank, line_comment;
 
 Productions
-	goal = commands*;
+	goal = commands*{->New goal([commands])};
 	
-	commands = {func}function | {state}statement;
+	commands = {func}function {->New commands.func(function)}| {state}statement{->New commands.state(statement)};
 	
-	identifier_dot = id dot;
+	identifier_dot = id dot{->New identifier_dot(id)};
 	
-	module = identifier_dot* id;
+	module = identifier_dot* id{->New module([identifier_dot],id)};
 	
-	function = def id l_par argument? r_par semi statement;
+	function = def id l_par argument? r_par semi statement{->New function(id,[argument],statement)};
 	
-	equal_value = eq value;
+	equal_value = eq value{->New equal_value(value)};
 	
-	comma_identifier = comma id equal_value?;
+	comma_identifier = comma id equal_value?{->New comma_identifier(id,[equal_value])};
 	
-	argument = id equal_value? comma_identifier*;	
+	argument = id equal_value? comma_identifier*{->New argument(id,[equal_value],[comma_identifier])};	
 	
-	statement = {if} tab* if comparison semi statement|
-			  	{while} tab* while comparison semi statement|
-				{for} tab* for [id1]:id in [id2]:id semi statement|
-				{return} tab* return expression|
-				{print_simple} tab* print expression comma_expression* |
-				{equals} tab* id eq expression|
-				{subeq} tab* id mineq expression|
-				{diveq} tab* id diveq expression|
-				{list} tab* id l_br [exp8]:expression r_br eq [exp9]:expression|
-				{assert} assert expression comma_expression?|
-				{assert_comparison} assert comparison comma_expression?|
-				{funccall} tab* function_call|
-				{import} import;
+	statement = {if} tab* if comparison semi statement{->New statement.if(comparison,statement)}|
+			  	{while} tab* while comparison semi statement{->New statement.while(comparison,statement)}|
+				{for} tab* for [id1]:id in [id2]:id semi statement{->New statement.for(id1,id2,statement)}|
+				{return} tab* return expression{->New statement.return(expression)}|
+				{print_simple} tab* print expression comma_expression*{->New statement.print_simple(expression,[comma_expression])} |
+				{equals} tab* id eq expression{->New statement.equals(id,expression)}|
+				{subeq} tab* id mineq expression{->New statement.subeq(id,expression)}|
+				{diveq} tab* id diveq expression{->New statement.diveq(id,expression)}|
+				{list} tab* id l_br [exp8]:expression r_br eq [exp9]:expression{->New statement.list(id,exp8,exp9)}|
+				{assert} assert expression comma_expression?{->New statement.assert(expression,[comma_expression])}|
+				{assert_comparison} assert comparison comma_expression?{->New statement.assert_comparison(comparison,[comma_expression])}|
+				{funccall} tab* function_call{->New statement.funccall(function_call)}|
+				{import} import{->New statement.import(import)};
 				
-	sign = {neg} minus | {pos} plus;
-	number = {integer} sign? integer|{float} sign? float;	
+	sign = {neg} minus {->New sign.neg(minus)}| {pos} plus{->New sign.pos(plus)};
+	number = {integer} sign? integer{->New number.integer([sign],integer)}|{float} sign? float{->New number.float([sign],float)};	
 				
-	value = {func_call} id dot function_call | {number} number | {string} string;
+	value = {func_call} id dot function_call {->New value.func_call(id,function_call)}| {number} number{->New value.number(number)} | {string} string{->New value.string(string)};
 	
-	function_call = id l_par arglist? r_par;
+	function_call = id l_par arglist? r_par{->New function_call(id,[arglist])};
 	
-	comma_expression = comma expression;
+	comma_expression = comma expression{->New comma_expression(expression)};
 	
-	comma_value = comma value;
+	comma_value = comma value{->New comma_value(value)};
 	
-	arglist = expression comma_expression*;
+	arglist = expression comma_expression*{->New arglist(expression,[comma_expression])};
 	
-	comparison = {great} [exp1]:expression great [exp2]:expression |
-				 {less} [exp3]:expression less [exp4]:expression |
-				 {dif} [exp5]:expression dif [exp6]:expression |
-				 {eq} [exp7]:expression deq [exp8]:expression |
+	comparison = {great} [exp1]:expression great [exp2]:expression{->New comparison.great(exp1,exp2)} |
+				 {less} [exp3]:expression less [exp4]:expression{->New comparison.less(exp3,exp4)} |
+				 {dif} [exp5]:expression dif [exp6]:expression {->New comparison.dif(exp5,exp6)}|
+				 {eq} [exp7]:expression deq [exp8]:expression{->New comparison.eq(exp7,exp8)} |
 				 {true} true |
 				 {false} false;
 				 
-	as_identifier = as id;
+	as_identifier = as id{->New as_identifier(id)};
 	
-	comma_module_as_id = comma module as_identifier?;
+	comma_module_as_id = comma module as_identifier?{->New comma_module_as_id(module,[as_identifier])};
 	
-	comma_id_as_id = comma id as_identifier?;
+	comma_id_as_id = comma id as_identifier?{->New comma_id_as_id(id,[as_identifier])};
 	
-	import = {import_as} [imp1]:imp [module1]:module [as_id1]:as_identifier? comma_module_as_id* |
-			 {from_import} from [module2]:module [imp2]:imp id [as_id2]:as_identifier? comma_id_as_id*;
+	import = {import_as} imp module as_identifier? comma_module_as_id*{->New import.import_as(module,[as_identifier],[comma_module_as_id])} |
+			 {from_import} from module imp id as_identifier? comma_id_as_id*{->New import.from_import(module,id,[as_identifier],[comma_id_as_id])};
 	
-	more_values = {more_values} value comma_value* ;
+	more_values = {more_values} value comma_value*{->New more_values(value,[comma_value])};
 
-	expression = {multiplication} mult_or_div |
-				 {addition} expression plus mult_or_div|
-				 {subtraction} expression minus mult_or_div;				   	
+	expression = {multiplication} mult_or_div {->mult_or_div.expression}|
+				 {addition} expression plus mult_or_div{->New expression.addition(expression,mult_or_div.expression)}|
+				 {subtraction} expression minus mult_or_div{->New expression.subtraction(expression,mult_or_div.expression)};				   	
 					
-	mult_or_div = {pow} power |
-						  	{multiplication} mult_or_div mult power|
-							{division} mult_or_div div power;
+	mult_or_div{->expression} = {pow} power {->power.expression}|
+						  	{multiplication} mult_or_div mult power{->New expression.multiplication(mult_or_div.expression,power.expression)}|
+							{division} mult_or_div div power{->New expression.division(mult_or_div.expression,power.expression)};
 	
-	power = {smth} something |
-						  {power} power dmult something;
+	power{->expression} = {smth} something {->something.expression}|
+						  {power} power dmult something{->New expression.power(power.expression,something.expression)};
 
-	something = {id} id |
-			  	{val} value |
-				{func_call} function_call |
-				{par_exp} l_par expression r_par |
-				{br_exp} l_br more_values* r_br |
-				{id2} id l_br expression r_br;
+	something{->expression} = {id} id {->New expression.id2(id)}|
+			  	{val} value {->New expression.val(value)}|
+				{func_call} function_call {->New expression.func_call(function_call)}|
+				{par_exp} l_par expression r_par {->New expression.par_exp(expression)}|
+				{br_exp} l_br more_values* r_br {->New expression.br_exp([more_values])}|
+				{expression_alone} id l_br expression r_br{->New expression.expression_alone(id,expression)};
 
 
 
@@ -155,13 +155,106 @@ Productions
 		goal = commands*;
 	
 		commands = {func} function |
-			   {stmt} statement;
-	
-		function = id argument* statement;
-	
-		argument = id value* id_value*;
+			   {state} statement;
+		
 	
 		id_value = id value*;
+	
+		identifier_dot = id;
+		
+		module = identifier_dot* id;
+		
+		function = id argument* statement;
+
+		equal_value = value;
+		
+		comma_identifier = id equal_value*;
+		
+		argument = id equal_value* comma_identifier*;			
+		
+		statement ={if}   comparison  statement |
+		    {while}   comparison  statement |
+		    {for}  [id1]:id  [id2]:id  statement  |
+		    {return}  expression   |
+		    {print_simple}  expression comma_expression* |
+		    {equals} id expression|
+		    {subeq} id expression|
+		    {diveq} id expression|
+			{list}  id  [exp8]:expression [exp9]:expression|
+			{assert} expression comma_expression*|
+			{assert_comparison}  comparison comma_expression*|
+			{funccall} function_call|
+			{import} import;
+			
+		sign = {neg} minus| {pos} plus;	
+			
+		number = {integer} sign* integer |{float} sign* float;		
+		
+		value = {func_call} id function_call | {number} number | {string} string;
+		
+		function_call = id arglist*;
+
+		comma_expression = expression;
+		
+		comma_value = value;
+		
+		arglist = expression comma_expression*;
+		
+		comparison = {great} [l]:expression [r]:expression|
+				 {less} [l]:expression  [r]:expression |
+				 {dif} [l]:expression  [r]:expression |
+				 {eq} [l]:expression [r]:expression|
+				 {true} true |
+				 {false} false;
+				 
+		as_identifier = id;		 
+		
+		comma_module_as_id = module as_identifier*;
+		
+		comma_id_as_id = id as_identifier*;
+		
+		import = {import_as}module as_identifier* comma_module_as_id*|
+			  {from_import}module id as_identifier* comma_id_as_id*;
+			 
+		more_values = value comma_value*;
+		
+		
+		expression = {addition} [l]:expression [r]:expression|
+					 {subtraction}  [l]:expression [r]:expression|
+					 {multiplication} [l]:expression [r]:expression|
+					 {division} [l]:expression [r]:expression|
+					 {power} [l]:expression [r]:expression|
+					 {id} id expression|
+					 {func_call} function_call|
+					 {val} value|
+					 {id2} id|
+					 {par_exp} expression|
+					 {br_exp} more_values*|
+					 {expression_alone} id expression;
+					 
+			
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+				
+				
+
 	
 
 	
