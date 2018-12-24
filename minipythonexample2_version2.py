@@ -4,7 +4,7 @@
 #! /usr/bin/env python
 #A miniPython example
 import numpy as np, random as rd
-from torch import nn,random as rd
+from torch import nn as neural,random as rd
 def pepe(i, j):
 	print i + j
 
