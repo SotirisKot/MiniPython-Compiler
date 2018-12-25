@@ -5,7 +5,7 @@ import java.util.*;
 public class myvisitor1 extends DepthFirstAdapter 
 {
 	private Hashtable symtable; //hashtable for variables	
-	private Boolean for_loop = false; // ok kalo 8a htan na broume kati kalitero edw alla den h3era ti na kanw
+	private Boolean loop = false; // ok kalo 8a htan na broume kati kalitero edw alla den h3era ti na kanw
 
 	myvisitor1(Hashtable symtable) 
 	{
@@ -78,18 +78,18 @@ public class myvisitor1 extends DepthFirstAdapter
 	
 	//check if variable is not defined
 	public void inAId2Expression(AId2Expression node){
-		
 		String var_name = node.getId().toString();
 		int line = ((TId)node.getId()).getLine();
-		if(!symtable.containsKey(var_name) && !for_loop){
+		if(!symtable.containsKey(var_name) && !loop){
 			System.out.println(" Error : in line " + line + " variable " + var_name + "is not defined. ");
 		}else{
-			for_loop = false;
+			loop = false;
 		}
 	}
 
 
 	public void inAArgument(AArgument node){
+
 		String var_name = node.getId().toString();
 		if(!(symtable.containsKey(var_name))){
 			symtable.put(var_name,node);
@@ -141,15 +141,38 @@ public class myvisitor1 extends DepthFirstAdapter
 		
 		String varName1 = node.getId1().toString();
 		String varName2 = node.getId2().toString();
-		
 		if (!symtable.containsKey(varName2)) {
 			int line = ((TId) node.getId2()).getLine();
 			System.out.println(" Error : in line " + line + " variable " + varName2 + "is not defined.");
-			for_loop = true;
+			loop = true;
 		}else{
 			if (!symtable.containsKey(varName1)) {
 				symtable.put(varName1, node);
 			}
 		}
 	}
+
+	// public void inAWhileStatement(AWhileStatement node) {
+		
+	// 	String[] varName1 = node.getComparison().toString().split(" ");
+	// 	for(int i=0; i<varName1.length; i++){
+	// 		if(!(symtable.containsKey(varName1[i]))){
+	// 			//int line = ((TId) node.getId2()).getLine();
+	// 			System.out.println(" Error : in line " + 13 + " variable " + varName1[i] + " is not DEFINED.");
+	// 			loop = true;
+	// 		}else{
+
+	// 		}
+	// 	}
+		
+	// 	// if (!symtable.containsKey(varName2)) {
+	// 	// 	int line = ((TId) node.getId2()).getLine();
+	// 	// 	System.out.println(" Error : in line " + line + " variable " + varName2 + "is not defined.");
+	// 	// 	loop = true;
+	// 	// }else{
+	// 	// 	if (!symtable.containsKey(varName1)) {
+	// 	// 		symtable.put(varName1, node);
+	// 	// 	}
+	// 	// }
+	// }
 }
