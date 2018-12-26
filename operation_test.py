@@ -7,4 +7,7 @@ y =  a + 'ho'
 z = 1 + 'heyy'
 
 u = 1 + 2
-print u
+print u + 1
+print u + x
+
+print u / x
