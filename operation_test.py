@@ -11,3 +11,7 @@ print u + 1
 print u + x
 
 print u / x
+
+print u ** x
+
+k = 1 ** 'hoho'

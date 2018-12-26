@@ -171,6 +171,33 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 	}
 
+	public void outAPowerExpression(APowerExpression node){
+		PValue v1 = null; 
+		PValue v2 = null;
+		if(node.getL() instanceof AId2Expression){
+			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getL().toString());
+			v1 = (PValue) getOut(nodeEq);
+		}else{
+			v1 = (PValue) getOut(node.getL());
+		}
+		if(node.getR() instanceof AId2Expression){
+			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getR().toString());
+			v2 = (PValue) getOut(nodeEq);
+		}else{
+			v2 = (PValue) getOut(node.getR());
+		}
+
+		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
+			System.out.println(" Error :: cannot use power with: string and number.");
+		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
+			System.out.println(" Error ::cannot use power with: number and string.");
+		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
+			setOut(node, new AStringValue());
+		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
+			setOut(node, new ANumberValue());
+		}
+	}
+
 	public void outAEqualsStatement(AEqualsStatement node) {
 		String varName = node.getId().toString();
 		PValue type = (PValue) getOut(node.getExpression());
