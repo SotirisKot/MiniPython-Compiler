@@ -117,24 +117,44 @@ public class myvisitor1 extends DepthFirstAdapter
 		setOut(node, new AStringValue());
 	}
 
-	// public void outAAdditionExpression(AAdditionExpression node){
-	// 	PValue v1 = (PValue) getOut(node.getL());
-	// 	PExpression v2 = (PExpression) getOut(node.getR());
-
-	// 	System.out.println(v1.getClass());
-	// 	System.out.println(v2.getClass());
-	// }
-
-	public void outAId2Expression(AId2Expression node){
-		setOut(node, new AId2Expression());
+	public void outAAdditionExpression(AAdditionExpression node){
+		PValue v1 = null; 
+		PValue v2 = null;
+		if (node.getL() instanceof AId2Expression || (node.getR() instanceof AId2Expression)){
+			if(node.getL() instanceof AId2Expression){
+				AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+				v2 = (PValue) getOut(node.getR());	
+			}
+			if(node.getR() instanceof AId2Expression){
+				AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getL().toString());
+				v2 = (PValue) getOut(nodeEq);
+				v1 = (PValue) getOut(node.getL());	
+			}
+		}else{
+			v1 = (PValue) getOut(node.getL());
+			v2 = (PValue) getOut(node.getR());	
+		}
+		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
+			System.out.println(" Error :: cannot add string with number.");
+		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
+			System.out.println(" Error :: cannot add number with string.");
+		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
+			setOut(node, new AStringValue());
+		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
+			setOut(node, new ANumberValue());
+		}
 	}
 
 	public void outAEqualsStatement(AEqualsStatement node) {
-		
 		String varName = node.getId().toString();
-		if (!symtable.containsKey(varName)) {
-			symtable.put(varName, node);
-		}
+		PValue type = (PValue) getOut(node.getExpression());
+		setOut(node, type);
+	}
+
+	public void inAEqualsStatement(AEqualsStatement node) {
+		String varName = node.getId().toString();
+		symtable.put(varName, node);
 	}
 
 	public void inAForStatement(AForStatement node) {
@@ -152,27 +172,4 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 	}
 
-	// public void inAWhileStatement(AWhileStatement node) {
-		
-	// 	String[] varName1 = node.getComparison().toString().split(" ");
-	// 	for(int i=0; i<varName1.length; i++){
-	// 		if(!(symtable.containsKey(varName1[i]))){
-	// 			//int line = ((TId) node.getId2()).getLine();
-	// 			System.out.println(" Error : in line " + 13 + " variable " + varName1[i] + " is not DEFINED.");
-	// 			loop = true;
-	// 		}else{
-
-	// 		}
-	// 	}
-		
-	// 	// if (!symtable.containsKey(varName2)) {
-	// 	// 	int line = ((TId) node.getId2()).getLine();
-	// 	// 	System.out.println(" Error : in line " + line + " variable " + varName2 + "is not defined.");
-	// 	// 	loop = true;
-	// 	// }else{
-	// 	// 	if (!symtable.containsKey(varName1)) {
-	// 	// 		symtable.put(varName1, node);
-	// 	// 	}
-	// 	// }
-	// }
 }
