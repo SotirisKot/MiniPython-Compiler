@@ -35,7 +35,7 @@ public class myvisitor1 extends DepthFirstAdapter
 					return;
 				}
 				
-				//koitame an oi dyo synarthseis exoun idio onoma k idio ari8mo parametrwn kai oi parametroi einai idioi! px an exoume: 
+				//koitame an oi dyo synarthseis exoun idio onoma k idio ari8mo parametrwn! px an exoume: 
 				//def add(x,y,z):
 				//	return x
 				//
@@ -54,7 +54,7 @@ public class myvisitor1 extends DepthFirstAdapter
 					LinkedList list2 = arg2.getEqualValue();
 					list1 = arg1.getCommaIdentifier();
 					list2 = arg2.getCommaIdentifier();
-				
+					
 					for(int i=0; i<list1.size(); i++){
 						ACommaIdentifier commaid1 = (ACommaIdentifier) list1.get(i);
 						ACommaIdentifier commaid2 = (ACommaIdentifier) list2.get(i);
@@ -68,6 +68,29 @@ public class myvisitor1 extends DepthFirstAdapter
 					System.out.println("Error : in line " + line + " function " + func_name + "is already defined. ");
 				}else{
 					symtable.put(func_name,node);
+				}
+			}
+			if(node_arguments.size()!=0){
+				System.out.println("i am in");
+				LinkedList args = node.getArgument();
+				AEqualValue equalv = null;
+				LinkedList commaIds = null;
+				AArgument argument = (AArgument)args.get(0);
+				if(argument.getEqualValue().size()!=0){
+					equalv = (AEqualValue)argument.getEqualValue().get(0);
+					System.out.println(equalv.toString());
+				}
+				commaIds = argument.getCommaIdentifier();
+				if(equalv != null && commaIds.size() !=0 && ((ACommaIdentifier)commaIds.get(0)).getEqualValue().size()==0){
+						System.out.println("Error : in line " + line + " function " + func_name + "non default");
+
+				}
+				commaIds = argument.getCommaIdentifier();
+				for(int i=0; i<commaIds.size(); ++i){
+					LinkedList vallist = ((ACommaIdentifier)commaIds.get(i)).getEqualValue();
+					if(vallist.size()!=0 && i+1 < commaIds.size() && ((ACommaIdentifier)commaIds.get(i+1)).getEqualValue().size() == 0){
+							System.out.println("Error : in line " + line + " function " + func_name + "non default");
+					}
 				}
 			}
 		}else{
