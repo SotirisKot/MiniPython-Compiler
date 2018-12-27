@@ -26,77 +26,111 @@ public class myvisitor1 extends DepthFirstAdapter
 			LinkedList node_arguments = node.getArgument();
 			AFunction def_function = (AFunction) symtable.get(func_name);  
 			LinkedList def_arguments = def_function.getArgument();
-			
 			if(def_arguments.size() == node_arguments.size()){
-				//tsekaroume an to node_arguments einai iso me to mhden ara den exoume orismata sthn synarthsh mas
-				//px foo() 
+
 				if(node_arguments.size()==0){
 					System.out.println("Error : in line " + line + " function " + func_name + "is already defined. ");
 					return;
 				}
-				
-				//koitame an oi dyo synarthseis exoun idio onoma k idio ari8mo parametrwn! px an exoume: 
-				//def add(x,y,z):
-				//	return x
 				//
-				//def add(x,y,z):
-				// return x 
-				//
-				//8a xtyphsei error sto line me to 2o define 
-				int counter_param = 0;
 				AArgument arg1 = (AArgument) node_arguments.get(0);
-				String[] parts = arg1.toString().split(" ");
 				AArgument arg2 = (AArgument) def_arguments.get(0);
-				
-				if((arg1.getId().toString()).equals(arg2.getId().toString())){
-					counter_param++;
-					LinkedList list1 = arg1.getEqualValue();
-					LinkedList list2 = arg2.getEqualValue();
-					list1 = arg1.getCommaIdentifier();
-					list2 = arg2.getCommaIdentifier();
-					
-					for(int i=0; i<list1.size(); i++){
-						ACommaIdentifier commaid1 = (ACommaIdentifier) list1.get(i);
-						ACommaIdentifier commaid2 = (ACommaIdentifier) list2.get(i);
-						if((commaid1.getId().getText()).equals(commaid2.getId().getText())){
-							counter_param++;
+				//
+				LinkedList equalv1 = arg1.getEqualValue();
+				LinkedList equalv2 = arg2.getEqualValue();
+				//
+				LinkedList commaId1 = arg1.getCommaIdentifier();
+				LinkedList commaId2 = arg2.getCommaIdentifier();
+				//
+				if(equalv1.size() != 0 && equalv2.size() == 0 && commaId1.size() != 0 && commaId2.size() != 0){
+					System.out.println("Error : in line " + line + " function " + func_name + "non default");
+			 		return;
+				}else if(equalv2.size() != 0 && equalv1.size() == 0 && commaId1.size() != 0 && commaId2.size() != 0){
+					System.out.println("Error : in line " + line + " function " + func_name + "non default");
+			 		return;
+				}
+				//
+				if (commaId1.size() == commaId2.size()){
+					//
+					ACommaIdentifier argument1;
+					ACommaIdentifier argument2;
+					LinkedList eqval1;
+					LinkedList eqval2;
+					Boolean already_defined = false;
+					//
+					for(int i=0; i<commaId1.size(); i++){
+						//
+						argument1 = (ACommaIdentifier) commaId1.get(i);
+						argument2 = (ACommaIdentifier) commaId2.get(i);
+						//
+						eqval1 = argument1.getEqualValue();
+						eqval2 = argument2.getEqualValue();
+
+						//
+						if(eqval1.size() != 0 && eqval2.size() == 0){
+							System.out.println("Error : in line " + line + " function " + func_name + "non default");
+			 				return;
+						}else if(eqval2.size() != 0 && eqval1.size() == 0){
+							System.out.println("ehehehheh2");
+							System.out.println("Error : in line " + line + " function " + func_name + "non default");
+			 				return;
+						}else{
+							already_defined = true;
 						}
 					}
-				}
-				
-				if(counter_param == parts.length){
-					System.out.println("Error : in line " + line + " function " + func_name + "is already defined. ");
-				}else{
-					symtable.put(func_name,node);
-				}
-			}
-			if(node_arguments.size()!=0){
-				System.out.println("i am in");
-				LinkedList args = node.getArgument();
-				AEqualValue equalv = null;
-				LinkedList commaIds = null;
-				AArgument argument = (AArgument)args.get(0);
-				if(argument.getEqualValue().size()!=0){
-					equalv = (AEqualValue)argument.getEqualValue().get(0);
-					System.out.println(equalv.toString());
-				}
-				commaIds = argument.getCommaIdentifier();
-				if(equalv != null && commaIds.size() !=0 && ((ACommaIdentifier)commaIds.get(0)).getEqualValue().size()==0){
+					if (already_defined){
+						System.out.println("Error : in line " + line + " function " + func_name + "is already defined. ");
+						return;
+					}
+				}else if (commaId1.size() > commaId2.size()){
+					//
+					ACommaIdentifier argument1;
+					LinkedList eqval1;
+					Boolean hasDefault = false;
+					//
+					for (int i=0; i<commaId1.size(); i++){
+						//
+						argument1 = (ACommaIdentifier) commaId1.get(i);
+						eqval1 = argument1.getEqualValue();
+						if (eqval1.size() != 0){
+							hasDefault = true;
+							break;
+						}
+					}
+					//
+					if (hasDefault){
 						System.out.println("Error : in line " + line + " function " + func_name + "non default");
-
-				}
-				commaIds = argument.getCommaIdentifier();
-				for(int i=0; i<commaIds.size(); ++i){
-					LinkedList vallist = ((ACommaIdentifier)commaIds.get(i)).getEqualValue();
-					if(vallist.size()!=0 && i+1 < commaIds.size() && ((ACommaIdentifier)commaIds.get(i+1)).getEqualValue().size() == 0){
-							System.out.println("Error : in line " + line + " function " + func_name + "non default");
+			 			return;
+					}else{
+						symtable.put(func_name,node);
+					}
+				}else{
+					//
+					ACommaIdentifier argument2;
+					LinkedList eqval2;
+					Boolean hasDefault = false;
+					//
+					for (int i=0; i<commaId2.size(); i++){
+						//
+						argument2 = (ACommaIdentifier) commaId2.get(i);
+						eqval2 = argument2.getEqualValue();
+						if (eqval2.size() != 0){
+							hasDefault = true;
+							break;
+						}
+					}
+					//
+					if (hasDefault){
+						System.out.println("Error : in line " + line + " function " + func_name + "non default");
+			 			return;
+					}else{
+						symtable.put(func_name,node);
 					}
 				}
 			}
 		}else{
 			symtable.put(func_name,node);
 		}
-		
 	}
 	
 	//check if variable is not defined
