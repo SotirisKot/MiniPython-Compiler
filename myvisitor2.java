@@ -17,7 +17,7 @@ public class myvisitor2 extends DepthFirstAdapter {
 	public void inAFunctionCall(AFunctionCall node){
 		String func_called = node.getId().toString();
 		
-		if(!(functions_symtable.contains(func_called))){
+		if(!(functions_symtable.containsKey(func_called))){
 			System.out.println("Error function: " + func_called + "is not defined!");
 		}
 	}
