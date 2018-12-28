@@ -17,10 +17,14 @@ public class ParserTest2
         new PushbackReader(
         new FileReader(args[0].toString()), 1024)));
 
-      Hashtable symtable =  new Hashtable();
+      Hashtable variables_symtable =  new Hashtable();
+      Hashtable functions_symtable =  new Hashtable();
       Start ast = parser.parse();
-      ast.apply(new myvisitor1(symtable));
+      myvisitor1 visitor1 = new myvisitor1(variables_symtable, functions_symtable);
+      ast.apply(visitor1);
       //System.out.println(ast);
+      myvisitor2 visitor2 = new myvisitor2(visitor1.getVariableTable(), visitor1.getFunctionTable());
+      ast.apply(visitor2);
     }
     catch (Exception e)
     {

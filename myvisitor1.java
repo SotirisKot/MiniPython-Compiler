@@ -4,12 +4,22 @@ import java.util.*;
 
 public class myvisitor1 extends DepthFirstAdapter 
 {
-	private Hashtable symtable; //hashtable for variables	
+	private Hashtable functions_symtable; //hashtable for functions
+	private Hashtable variables_symtable; //hashtable for variables	
 	private Boolean loop = false; // ok kalo 8a htan na broume kati kalitero edw alla den h3era ti na kanw
 
-	myvisitor1(Hashtable symtable) 
+	myvisitor1(Hashtable variables_symtable, Hashtable functions_symtable) 
 	{
-		this.symtable = symtable;
+		this.variables_symtable = variables_symtable;
+		this.functions_symtable = functions_symtable;
+	}
+
+	public Hashtable getFunctionTable(){
+		return this.functions_symtable;
+	}
+
+	public Hashtable getVariableTable(){
+		return this.variables_symtable;
 	}
 	
 	//check if a function is already defined
@@ -18,13 +28,13 @@ public class myvisitor1 extends DepthFirstAdapter
 		String func_name = node.getId().toString();
 		int line = ((TId) node.getId()).getLine();
 			
-		if(symtable.containsKey(func_name)){
+		if(functions_symtable.containsKey(func_name)){
 			//Apo8hkeuoyme ta arguments tis synarthshs pou molis synanthse o compiler
 			//vriskoume ta arguments tis synarthshs poy hdh exoume mesa sto symtamble
 			//sygrinoume meta3i tous gia na doume an exoun idia args h kapoio apo ta args xrhsimopoiei 
 			//default timh
 			LinkedList node_arguments = node.getArgument();
-			AFunction def_function = (AFunction) symtable.get(func_name);  
+			AFunction def_function = (AFunction) functions_symtable.get(func_name);  
 			LinkedList def_arguments = def_function.getArgument();
 			if(def_arguments.size() == node_arguments.size()){
 
@@ -102,7 +112,7 @@ public class myvisitor1 extends DepthFirstAdapter
 						System.out.println("Error : in line " + line + " function " + func_name + "non default");
 			 			return;
 					}else{
-						symtable.put(func_name,node);
+						functions_symtable.put(func_name,node);
 					}
 				}else{
 					//
@@ -124,12 +134,12 @@ public class myvisitor1 extends DepthFirstAdapter
 						System.out.println("Error : in line " + line + " function " + func_name + "non default");
 			 			return;
 					}else{
-						symtable.put(func_name,node);
+						functions_symtable.put(func_name,node);
 					}
 				}
 			}
 		}else{
-			symtable.put(func_name,node);
+			functions_symtable.put(func_name,node);
 		}
 	}
 	
@@ -137,7 +147,7 @@ public class myvisitor1 extends DepthFirstAdapter
 	public void inAId2Expression(AId2Expression node){
 		String var_name = node.getId().toString();
 		int line = ((TId)node.getId()).getLine();
-		if(!symtable.containsKey(var_name) && !loop){
+		if(!variables_symtable.containsKey(var_name) && !loop){
 			System.out.println(" Error : in line " + line + " variable " + var_name + "is not defined. ");
 		}else{
 			loop = false;
@@ -148,15 +158,15 @@ public class myvisitor1 extends DepthFirstAdapter
 	public void inAArgument(AArgument node){
 
 		String var_name = node.getId().toString();
-		if(!(symtable.containsKey(var_name))){
-			symtable.put(var_name,node);
+		if(!(variables_symtable.containsKey(var_name))){
+			variables_symtable.put(var_name,node);
 		}
 		// get the rest of the arguments
 		LinkedList list_arguments = node.getCommaIdentifier();
 		for(int i=0; i< list_arguments.size(); i++){
 			var_name = ((ACommaIdentifier) list_arguments.get(i)).getId().toString();
-			if (!(symtable.containsKey(var_name))){
-				symtable.put(var_name, node);
+			if (!(variables_symtable.containsKey(var_name))){
+				variables_symtable.put(var_name, node);
 			}
 		} 
 	}
@@ -178,13 +188,13 @@ public class myvisitor1 extends DepthFirstAdapter
 		PValue v1 = null; 
 		PValue v2 = null;
 		if(node.getL() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getL().toString());
+			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
 			v1 = (PValue) getOut(nodeEq);
 		}else{
 			v1 = (PValue) getOut(node.getL());
 		}
 		if(node.getR() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getR().toString());
+			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
 			v2 = (PValue) getOut(nodeEq);
 		}else{
 			v2 = (PValue) getOut(node.getR());
@@ -205,13 +215,13 @@ public class myvisitor1 extends DepthFirstAdapter
 		PValue v1 = null; 
 		PValue v2 = null;
 		if(node.getL() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getL().toString());
+			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
 			v1 = (PValue) getOut(nodeEq);
 		}else{
 			v1 = (PValue) getOut(node.getL());
 		}
 		if(node.getR() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getR().toString());
+			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
 			v2 = (PValue) getOut(nodeEq);
 		}else{
 			v2 = (PValue) getOut(node.getR());
@@ -232,13 +242,13 @@ public class myvisitor1 extends DepthFirstAdapter
 		PValue v1 = null; 
 		PValue v2 = null;
 		if(node.getL() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getL().toString());
+			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
 			v1 = (PValue) getOut(nodeEq);
 		}else{
 			v1 = (PValue) getOut(node.getL());
 		}
 		if(node.getR() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) symtable.get(node.getR().toString());
+			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
 			v2 = (PValue) getOut(nodeEq);
 		}else{
 			v2 = (PValue) getOut(node.getR());
@@ -263,20 +273,20 @@ public class myvisitor1 extends DepthFirstAdapter
 
 	public void inAEqualsStatement(AEqualsStatement node) {
 		String varName = node.getId().toString();
-		symtable.put(varName, node);
+		variables_symtable.put(varName, node);
 	}
 
 	public void inAForStatement(AForStatement node) {
 		
 		String varName1 = node.getId1().toString();
 		String varName2 = node.getId2().toString();
-		if (!symtable.containsKey(varName2)) {
+		if (!variables_symtable.containsKey(varName2)) {
 			int line = ((TId) node.getId2()).getLine();
 			System.out.println(" Error : in line " + line + " variable " + varName2 + "is not defined.");
 			loop = true;
 		}else{
-			if (!symtable.containsKey(varName1)) {
-				symtable.put(varName1, node);
+			if (!variables_symtable.containsKey(varName1)) {
+				variables_symtable.put(varName1, node);
 			}
 		}
 	}
