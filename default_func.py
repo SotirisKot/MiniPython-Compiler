@@ -7,17 +7,22 @@
 
 #error sto default
 # def add(x,y,z):
-#     return x
+#     return x + y
 
 # def add(x,y,z=1):
-#     return x
+#     return x + y
 
-#oxi error sto default...neo function fantazomai
+# def add(x,y=2):
+#    return x + y
+
 # def add(x,y):
-#     return x
+#     return x + y
+# oxi error sto default...neo function fantazomai
+def add(x):
+    return x
 
-# def add(x=1):
-#     return x
+def add(x=1):
+    return x
 
 #oxi error
 # def add(x,y):

@@ -27,7 +27,7 @@ public class myvisitor1 extends DepthFirstAdapter
 		
 		String func_name = node.getId().toString();
 		int line = ((TId) node.getId()).getLine();
-			
+		
 		if(functions_symtable.containsKey(func_name)){
 			//Apo8hkeuoyme ta arguments tis synarthshs pou molis synanthse o compiler
 			//vriskoume ta arguments tis synarthshs poy hdh exoume mesa sto symtamble
@@ -52,10 +52,55 @@ public class myvisitor1 extends DepthFirstAdapter
 				LinkedList commaId1 = arg1.getCommaIdentifier();
 				LinkedList commaId2 = arg2.getCommaIdentifier();
 				//
+				// Check if the second function with the same name has a default argument before a non-default one
+				ACommaIdentifier argument;
+				Boolean notDefault = true;
+				Boolean only_defaults = false;
+				Boolean only_non_defaults = true;
+				if(equalv1.size() != 0){
+					notDefault = false;
+					only_defaults = true;
+				}
+				for (int i=0; i<commaId1.size(); i++){
+					argument = (ACommaIdentifier) commaId1.get(i);
+					equalv1 = argument.getEqualValue();
+					if(equalv1.size() == 0 && !notDefault){
+						//System.out.println(argument2);
+						notDefault = true;
+						only_defaults = false;
+						only_non_defaults = false;
+						break;
+					}else if (equalv1.size() != 0){
+						notDefault = false;
+						only_defaults = true;
+						only_non_defaults = true;
+					}
+				}
+				if (notDefault && commaId1.size() != 0 && !only_defaults && !only_non_defaults){
+					System.out.println("Error : in line " + line + ". A non default argument cannot follow a default one at function " + func_name);
+				 	return;
+				}
+				//
+				arg1 = (AArgument) node_arguments.get(0);
+				arg2 = (AArgument) def_arguments.get(0);
+				//
+				equalv1 = arg1.getEqualValue();
+				equalv2 = arg2.getEqualValue();
+				//
+				commaId1 = arg1.getCommaIdentifier();
+				commaId2 = arg2.getCommaIdentifier();
+				//
 				if(equalv1.size() != 0 && equalv2.size() == 0 && commaId1.size() != 0 && commaId2.size() != 0){
+					System.out.println(func_name + "1");
+					System.out.println("Error : in line " + line + " function " + func_name + "non default");
+					return;
+				}else if(equalv2.size() != 0 && equalv1.size() == 0 && commaId1.size() != 0 && commaId2.size() != 0){
 					System.out.println("Error : in line " + line + " function " + func_name + "non default");
 			 		return;
-				}else if(equalv2.size() != 0 && equalv1.size() == 0 && commaId1.size() != 0 && commaId2.size() != 0){
+				}else if(equalv1.size() != 0 && equalv2.size() == 0 && commaId1.size() == 0 && commaId2.size() == 0){
+					System.out.println("Error : in line " + line + " function " + func_name + "non default");
+			 		return;
+				}else if(equalv1.size() == 0 && equalv2.size() != 0 && commaId1.size() == 0 && commaId2.size() == 0){
 					System.out.println("Error : in line " + line + " function " + func_name + "non default");
 			 		return;
 				}
@@ -139,6 +184,38 @@ public class myvisitor1 extends DepthFirstAdapter
 				}
 			}
 		}else{
+			// prepei na elegxei an yparxei non default prin apo default
+			LinkedList def_arguments = node.getArgument();
+			AArgument arg2 = (AArgument) def_arguments.get(0);
+			LinkedList equalv2 = arg2.getEqualValue();
+			LinkedList commaId2 = arg2.getCommaIdentifier();
+			ACommaIdentifier argument2;
+			Boolean notDefault = true;
+			Boolean only_defaults = false;
+			Boolean only_non_defaults = true;
+			if(equalv2.size() != 0){
+				notDefault = false;
+				only_defaults = true;
+			}
+			for (int i=0; i<commaId2.size(); i++){
+				argument2 = (ACommaIdentifier) commaId2.get(i);
+				equalv2 = argument2.getEqualValue();
+				if(equalv2.size() == 0 && !notDefault){
+					//System.out.println(argument2);
+					notDefault = true;
+					only_defaults = false;
+					only_non_defaults = false;
+					break;
+				}else if (equalv2.size() != 0){
+					notDefault = false;
+					only_defaults = true;
+					only_non_defaults = true;
+				}
+			}
+			if (notDefault && commaId2.size() != 0 && !only_defaults && !only_non_defaults){
+				System.out.println("Error : in line " + line + ". A non default argument cannot follow a default one at function " + func_name);
+			 	return;
+			}
 			functions_symtable.put(func_name,node);
 		}
 	}
@@ -149,6 +226,7 @@ public class myvisitor1 extends DepthFirstAdapter
 		int line = ((TId)node.getId()).getLine();
 		if(!variables_symtable.containsKey(var_name) && !loop){
 			System.out.println(" Error : in line " + line + " variable " + var_name + "is not defined. ");
+			return;
 		}else{
 			loop = false;
 		}
@@ -156,7 +234,6 @@ public class myvisitor1 extends DepthFirstAdapter
 
 
 	public void inAArgument(AArgument node){
-
 		String var_name = node.getId().toString();
 		if(!(variables_symtable.containsKey(var_name))){
 			variables_symtable.put(var_name,node);
@@ -187,15 +264,26 @@ public class myvisitor1 extends DepthFirstAdapter
 	public void outAAdditionExpression(AAdditionExpression node){
 		PValue v1 = null; 
 		PValue v2 = null;
+
 		if(node.getL() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
-			v1 = (PValue) getOut(nodeEq);
+			if (variables_symtable.get(node.getL().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+			}else if (variables_symtable.get(node.getL().toString()) instanceof AArgument){
+				AArgument nodeEq = (AArgument) variables_symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+			}
 		}else{
 			v1 = (PValue) getOut(node.getL());
 		}
 		if(node.getR() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
-			v2 = (PValue) getOut(nodeEq);
+			if (variables_symtable.get(node.getR().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
+				v2 = (PValue) getOut(nodeEq);
+			}else if (variables_symtable.get(node.getR().toString()) instanceof AArgument){
+				AArgument nodeEq = (AArgument) variables_symtable.get(node.getR().toString());
+				v2 = (PValue) getOut(nodeEq);
+			}
 		}else{
 			v2 = (PValue) getOut(node.getR());
 		}
@@ -215,14 +303,24 @@ public class myvisitor1 extends DepthFirstAdapter
 		PValue v1 = null; 
 		PValue v2 = null;
 		if(node.getL() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
-			v1 = (PValue) getOut(nodeEq);
+			if (variables_symtable.get(node.getL().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+			}else if (variables_symtable.get(node.getL().toString()) instanceof AArgument){
+				AArgument nodeEq = (AArgument) variables_symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+			}
 		}else{
 			v1 = (PValue) getOut(node.getL());
 		}
 		if(node.getR() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
-			v2 = (PValue) getOut(nodeEq);
+			if (variables_symtable.get(node.getR().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
+				v2 = (PValue) getOut(nodeEq);
+			}else if (variables_symtable.get(node.getR().toString()) instanceof AArgument){
+				AArgument nodeEq = (AArgument) variables_symtable.get(node.getR().toString());
+				v2 = (PValue) getOut(nodeEq);
+			}
 		}else{
 			v2 = (PValue) getOut(node.getR());
 		}
@@ -242,14 +340,24 @@ public class myvisitor1 extends DepthFirstAdapter
 		PValue v1 = null; 
 		PValue v2 = null;
 		if(node.getL() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
-			v1 = (PValue) getOut(nodeEq);
+			if (variables_symtable.get(node.getL().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+			}else if (variables_symtable.get(node.getL().toString()) instanceof AArgument){
+				AArgument nodeEq = (AArgument) variables_symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+			}
 		}else{
 			v1 = (PValue) getOut(node.getL());
 		}
 		if(node.getR() instanceof AId2Expression){
-			AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
-			v2 = (PValue) getOut(nodeEq);
+			if (variables_symtable.get(node.getR().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
+				v2 = (PValue) getOut(nodeEq);
+			}else if (variables_symtable.get(node.getR().toString()) instanceof AArgument){
+				AArgument nodeEq = (AArgument) variables_symtable.get(node.getR().toString());
+				v2 = (PValue) getOut(nodeEq);
+			}
 		}else{
 			v2 = (PValue) getOut(node.getR());
 		}
