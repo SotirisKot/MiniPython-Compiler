@@ -36,6 +36,7 @@ public class myvisitor1 extends DepthFirstAdapter
 			LinkedList node_arguments = node.getArgument();
 			AFunction def_function = (AFunction) functions_symtable.get(func_name);  
 			LinkedList def_arguments = def_function.getArgument();
+
 			if(def_arguments.size() == node_arguments.size()){
 
 				if(node_arguments.size()==0){
@@ -186,37 +187,41 @@ public class myvisitor1 extends DepthFirstAdapter
 		}else{
 			// prepei na elegxei an yparxei non default prin apo default
 			LinkedList def_arguments = node.getArgument();
-			AArgument arg2 = (AArgument) def_arguments.get(0);
-			LinkedList equalv2 = arg2.getEqualValue();
-			LinkedList commaId2 = arg2.getCommaIdentifier();
-			ACommaIdentifier argument2;
-			Boolean notDefault = true;
-			Boolean only_defaults = false;
-			Boolean only_non_defaults = true;
-			if(equalv2.size() != 0){
-				notDefault = false;
-				only_defaults = true;
-			}
-			for (int i=0; i<commaId2.size(); i++){
-				argument2 = (ACommaIdentifier) commaId2.get(i);
-				equalv2 = argument2.getEqualValue();
-				if(equalv2.size() == 0 && !notDefault){
-					//System.out.println(argument2);
-					notDefault = true;
-					only_defaults = false;
-					only_non_defaults = false;
-					break;
-				}else if (equalv2.size() != 0){
+			if (def_arguments.size() == 0){
+				functions_symtable.put(func_name,node);
+			}else{
+				AArgument arg2 = (AArgument) def_arguments.get(0);
+				LinkedList equalv2 = arg2.getEqualValue();
+				LinkedList commaId2 = arg2.getCommaIdentifier();
+				ACommaIdentifier argument2;
+				Boolean notDefault = true;
+				Boolean only_defaults = false;
+				Boolean only_non_defaults = true;
+				if(equalv2.size() != 0){
 					notDefault = false;
 					only_defaults = true;
-					only_non_defaults = true;
 				}
+				for (int i=0; i<commaId2.size(); i++){
+					argument2 = (ACommaIdentifier) commaId2.get(i);
+					equalv2 = argument2.getEqualValue();
+					if(equalv2.size() == 0 && !notDefault){
+						//System.out.println(argument2);
+						notDefault = true;
+						only_defaults = false;
+						only_non_defaults = false;
+						break;
+					}else if (equalv2.size() != 0){
+						notDefault = false;
+						only_defaults = true;
+						only_non_defaults = true;
+					}
+				}
+				if (notDefault && commaId2.size() != 0 && !only_defaults && !only_non_defaults){
+					System.out.println("Error : in line " + line + ". A non default argument cannot follow a default one at function " + func_name);
+				 	return;
+				}
+				functions_symtable.put(func_name,node);
 			}
-			if (notDefault && commaId2.size() != 0 && !only_defaults && !only_non_defaults){
-				System.out.println("Error : in line " + line + ". A non default argument cannot follow a default one at function " + func_name);
-			 	return;
-			}
-			functions_symtable.put(func_name,node);
 		}
 	}
 	

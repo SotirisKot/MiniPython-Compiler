@@ -1,4 +1,5 @@
-def add(x,y=1):
-   return x + y
+x = 0
+def add():
+   return x
 
-print add(1)
+print add()
