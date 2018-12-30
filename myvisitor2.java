@@ -33,49 +33,52 @@ public class myvisitor2 extends DepthFirstAdapter {
                     // TODO do something with 4th or 5th rule
                 }
             }else{
-                AArgument arg1 = (AArgument) func_arguments.get(0);
-                LinkedList equalv1 = arg1.getEqualValue();
-                LinkedList commaId1 = arg1.getCommaIdentifier();
-                ACommaIdentifier argument1;
-                LinkedList eqval1;
-                Boolean hasDefault = false;
-                int number_of_defaults = 0;
-                //
-                for(int i=0; i<commaId1.size(); i++){
-                    argument1 = (ACommaIdentifier) commaId1.get(i);
-                    eqval1 = argument1.getEqualValue();
-                    if (eqval1.size() != 0){
-                        hasDefault = true;
-                        number_of_defaults++;
-                    }
-                }
-                //
-                if (hasDefault || (equalv1.size() != 0)){
-                    //
-                    int number_of_given_args = args_func_call.get(0).toString().replace(" ", "").length();
-                    int number_of_func_args =  func_arguments.get(0).toString().replace(" ", "").length() - number_of_defaults;
-                    if(number_of_given_args >= number_of_func_args - number_of_defaults && number_of_given_args <= number_of_func_args){
-                        //everything is fine do something
-                        //TODO something with 4th or 5th rule
-                    }else{
-                        System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name);
-                        return;
-                    }
+                if(args_func_call.size() == 0){
+                    System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name);
+                    return;
                 }else{
-                    int number_of_given_args = args_func_call.get(0).toString().replace(" ", "").length();
-                    int number_of_func_args =  func_arguments.get(0).toString().replace(" ", "").length();
-                    if(number_of_given_args == number_of_func_args){
-                        System.out.println(number_of_given_args);
-                        System.out.println(number_of_func_args);
-                        //TODO something with 4th or 5th rule
+                    AArgument arg1 = (AArgument) func_arguments.get(0);
+                    LinkedList equalv1 = arg1.getEqualValue();
+                    LinkedList commaId1 = arg1.getCommaIdentifier();
+                    ACommaIdentifier argument1;
+                    LinkedList eqval1;
+                    Boolean hasDefault = false;
+                    int number_of_defaults = 0;
+                    //
+                    for(int i=0; i<commaId1.size(); i++){
+                        argument1 = (ACommaIdentifier) commaId1.get(i);
+                        eqval1 = argument1.getEqualValue();
+                        if (eqval1.size() != 0){
+                            hasDefault = true;
+                            number_of_defaults++;
+                        }
+                    }
+                    //
+                    if (hasDefault || (equalv1.size() != 0)){
+                        //
+                        int number_of_given_args = args_func_call.get(0).toString().replace(" ", "").length();
+                        int number_of_func_args =  func_arguments.get(0).toString().replace(" ", "").length() - number_of_defaults;
+                        if(number_of_given_args >= number_of_func_args - number_of_defaults && number_of_given_args <= number_of_func_args){
+                            //everything is fine do something
+                            //TODO something with 4th or 5th rule
+                        }else{
+                            System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name);
+                            return;
+                        }
                     }else{
-                        System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name +". Takes " + number_of_func_args + ", were given "+ number_of_given_args);
-                        return;
+                        int number_of_given_args = args_func_call.get(0).toString().replace(" ", "").length();
+                        int number_of_func_args =  func_arguments.get(0).toString().replace(" ", "").length();
+                        if(number_of_given_args == number_of_func_args){
+                            System.out.println(number_of_given_args);
+                            System.out.println(number_of_func_args);
+                            //TODO something with 4th or 5th rule
+                        }else{
+                            System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name +". Takes " + number_of_func_args + ", were given "+ number_of_given_args);
+                            return;
+                        }
                     }
                 }
             }
-
-            
         }else{
             System.out.println("Error : in line " + line + " function " + func_name + "is not defined. ");
             return;
