@@ -30,20 +30,28 @@ public class myvisitor2 extends DepthFirstAdapter {
             ACommaIdentifier argument1;
             LinkedList eqval1;
             Boolean hasDefault = false;
+            int number_of_defaults = 0;
             //
             for(int i=0; i<commaId1.size(); i++){
                 argument1 = (ACommaIdentifier) commaId1.get(i);
                 eqval1 = argument1.getEqualValue();
                 if (eqval1.size() != 0){
                     hasDefault = true;
-                    break;
+                    number_of_defaults++;
                 }
             }
             //
             if (hasDefault || (equalv1.size() != 0)){
-                // then it has a default value
-                System.out.println("Has a default value");
-                // do some stuff 
+                //
+                int number_of_given_args = args_func_call.get(0).toString().replace(" ", "").length();
+                int number_of_func_args =  func_arguments.get(0).toString().replace(" ", "").length() - number_of_defaults;
+                if(number_of_given_args >= number_of_func_args - number_of_defaults && number_of_given_args <= number_of_func_args){
+                    //everything is fine do something
+                    //TODO 
+                }else{
+                    System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name);
+                    return;
+                }
             }else{
                 int number_of_given_args = args_func_call.get(0).toString().replace(" ", "").length();
                 int number_of_func_args =  func_arguments.get(0).toString().replace(" ", "").length();
@@ -56,8 +64,6 @@ public class myvisitor2 extends DepthFirstAdapter {
                     return;
                 }
             }
-
-
         }else{
             System.out.println("Error : in line " + line + " function " + func_name + "is not defined. ");
             return;
