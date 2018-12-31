@@ -51,16 +51,6 @@ public class myvisitor2 extends DepthFirstAdapter {
                 Boolean hasDefault = false;
                 Boolean all_defaults = true;
                 int number_of_defaults = 0;
-                //
-                // PValue type = (PValue) getOut(args.getExpression());
-                // LinkedList rest_args = args.getCommaExpression();
-                // System.out.println(type.getClass());
-                // for(int i=0; i<rest_args.size(); i++){
-                //     ACommaExpression expr = (ACommaExpression) rest_args.get(i);
-                //     type = (PValue) getOut(expr.getExpression());
-                //     System.out.println(type.getClass());
-                // }
-                //
                 if (eqval1.size() != 0){
                     hasDefault = true;
                     number_of_defaults++;
@@ -77,13 +67,35 @@ public class myvisitor2 extends DepthFirstAdapter {
                         all_defaults = false;
                     }
                 }
-
+                //
                 if(args_func_call.size() == 0 && !all_defaults){
                     System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name);
                     return;
+                }else if(args_func_call.size() == 0 && all_defaults){
+                    //
+                    if(getOut(function.getStatement()) instanceof AAdditionExpression){
+                        AAdditionExpression adds = (AAdditionExpression) getOut(function.getStatement());
+                        AEqualValue v1 = (AEqualValue) temp.get(adds.getL().toString());
+                        AEqualValue v2 = (AEqualValue) temp.get(adds.getL().toString());
+                        if (v1.getValue() instanceof AStringValue && v2.getValue() instanceof ANumberValue){
+                            System.out.println(" Error :: cannot add string with number.");
+                        }else if(v1.getValue() instanceof ANumberValue && v2.getValue() instanceof AStringValue){
+                            System.out.println(" Error :: cannot add number with string.");
+                        }else if (v1.getValue() instanceof AStringValue && v2.getValue() instanceof AStringValue){
+                            setOut(node, new AStringValue());
+                        }else if (v1.getValue() instanceof ANumberValue && v2.getValue() instanceof ANumberValue){
+                            setOut(node, new ANumberValue());
+                        }
+                    }else if(getOut(function.getStatement()) instanceof AStringValue){
+                        AStringValue str = (AStringValue) getOut(function.getStatement());
+                        setOut(node, str);
+                    }else if(getOut(function.getStatement()) instanceof ANumberValue){
+                        ANumberValue num = (ANumberValue) getOut(function.getStatement());
+                        setOut(node, num);
+                    }
+                    //
                 }else if (args_func_call.size() != 0){
                     //
-                    System.out.println("hey");
                     if (hasDefault){
                         //
                         int number_of_given_args = args_func_call.get(0).toString().split(" ").length;
@@ -135,8 +147,6 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 ANumberValue num = (ANumberValue) getOut(function.getStatement());
                                 setOut(node, num);
                             }
-                            
-                            
                         }else{
                             System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name +". Takes " + number_of_func_args + ", were given "+ number_of_given_args);
                             return;
