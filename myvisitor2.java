@@ -44,52 +44,67 @@ public class myvisitor2 extends DepthFirstAdapter {
                     }
                 }
             }else{
-                if(args_func_call.size() == 0){
+                AArgument arg1 = (AArgument) func_arguments.get(0);
+                LinkedList commaId1 = arg1.getCommaIdentifier();
+                ACommaIdentifier argument1;
+                LinkedList eqval1 = arg1.getEqualValue();
+                Boolean hasDefault = false;
+                Boolean all_defaults = true;
+                int number_of_defaults = 0;
+                //
+                // PValue type = (PValue) getOut(args.getExpression());
+                // LinkedList rest_args = args.getCommaExpression();
+                // System.out.println(type.getClass());
+                // for(int i=0; i<rest_args.size(); i++){
+                //     ACommaExpression expr = (ACommaExpression) rest_args.get(i);
+                //     type = (PValue) getOut(expr.getExpression());
+                //     System.out.println(type.getClass());
+                // }
+                //
+                if (eqval1.size() != 0){
+                    hasDefault = true;
+                    number_of_defaults++;
+                }else{
+                    all_defaults = false;
+                }
+                for(int i=0; i<commaId1.size(); i++){
+                    argument1 = (ACommaIdentifier) commaId1.get(i);
+                    eqval1 = argument1.getEqualValue();
+                    if (eqval1.size() != 0){
+                        hasDefault = true;
+                        number_of_defaults++;
+                    }else{
+                        all_defaults = false;
+                    }
+                }
+
+                if(args_func_call.size() == 0 && !all_defaults){
                     System.out.println("Error : in line " + line + " wrong number of arguments for function " + func_name);
                     return;
-                }else{
-                    AArgument arg1 = (AArgument) func_arguments.get(0);
-                    LinkedList equalv1 = arg1.getEqualValue();
-                    LinkedList commaId1 = arg1.getCommaIdentifier();
-                    ACommaIdentifier argument1;
-                    LinkedList eqval1;
-                    Boolean hasDefault = false;
-                    int number_of_defaults = 0;
+                }else if (args_func_call.size() != 0){
                     //
-                    // PValue type = (PValue) getOut(args.getExpression());
-                    // LinkedList rest_args = args.getCommaExpression();
-                    // System.out.println(type.getClass());
-                    // for(int i=0; i<rest_args.size(); i++){
-                    //     ACommaExpression expr = (ACommaExpression) rest_args.get(i);
-                    //     type = (PValue) getOut(expr.getExpression());
-                    //     System.out.println(type.getClass());
-                    // }
-                    //
-                    for(int i=0; i<commaId1.size(); i++){
-                        argument1 = (ACommaIdentifier) commaId1.get(i);
-                        eqval1 = argument1.getEqualValue();
-                        if (eqval1.size() != 0){
-                            hasDefault = true;
-                            number_of_defaults++;
-                        }
-                    }
-                    //
-                    if (hasDefault || (equalv1.size() != 0)){
+                    System.out.println("hey");
+                    if (hasDefault){
                         //
                         int number_of_given_args = args_func_call.get(0).toString().split(" ").length;
                         int number_of_func_args  = func_arguments.get(0).toString().split(" ").length - number_of_defaults;
+                        System.out.println(number_of_given_args + " " + number_of_func_args);
                         if(number_of_given_args >= number_of_func_args - number_of_defaults && number_of_given_args <= number_of_func_args){
                             //everything is fine do something
                             //TODO something with 4th or 5th rule
                             if(getOut(function.getStatement()) instanceof AAdditionExpression){
                                 AAdditionExpression adds = (AAdditionExpression) getOut(function.getStatement());
-                                //TId id = (TId) adds.getL();
-                                System.out.println(adds.getL());
-                                AEqualValue val = (AEqualValue) temp.get(adds.getL().toString());
-                                System.out.println(val.getValue().getClass());
-                                System.exit(0);
-                                // AValExpression val = (AValExpression) adds.getR();
-                                // System.out.println(val.getValue().getClass());
+                                AEqualValue v1 = (AEqualValue) temp.get(adds.getL().toString());
+                                AEqualValue v2 = (AEqualValue) temp.get(adds.getL().toString());
+                                if (v1.getValue() instanceof AStringValue && v2.getValue() instanceof ANumberValue){
+                                    System.out.println(" Error :: cannot add string with number.");
+                                }else if(v1.getValue() instanceof ANumberValue && v2.getValue() instanceof AStringValue){
+                                    System.out.println(" Error :: cannot add number with string.");
+                                }else if (v1.getValue() instanceof AStringValue && v2.getValue() instanceof AStringValue){
+                                    setOut(node, new AStringValue());
+                                }else if (v1.getValue() instanceof ANumberValue && v2.getValue() instanceof ANumberValue){
+                                    setOut(node, new ANumberValue());
+                                }
                             }else if(getOut(function.getStatement()) instanceof AStringValue){
                                 AStringValue str = (AStringValue) getOut(function.getStatement());
                                 setOut(node, str);
@@ -127,7 +142,7 @@ public class myvisitor2 extends DepthFirstAdapter {
                             return;
                         }
                     }
-                }
+                }    
             }
         }else{
             System.out.println("Error : in line " + line + " function " + func_name + "is not defined. ");
@@ -168,7 +183,6 @@ public class myvisitor2 extends DepthFirstAdapter {
         LinkedList commaId1 = node.getCommaIdentifier();
         if(eqval1.size() != 0){
             AEqualValue val = (AEqualValue) eqval1.get(0);
-            System.out.println(val);
             temp.put(node.getId().toString(), val);
         }
         for(int i=0; i<commaId1.size(); i++){
