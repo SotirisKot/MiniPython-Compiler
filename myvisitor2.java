@@ -6,6 +6,7 @@ public class myvisitor2 extends DepthFirstAdapter {
 
     private Hashtable functions_symtable; //hashtable for functions
     private Hashtable variables_symtable; //hashtable for variables 
+    private Hashtable temp = new Hashtable();
 
     myvisitor2(Hashtable variables_symtable, Hashtable functions_symtable) 
     {
@@ -84,8 +85,9 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 AAdditionExpression adds = (AAdditionExpression) getOut(function.getStatement());
                                 //TId id = (TId) adds.getL();
                                 System.out.println(adds.getL());
-                                //AEqualValue val = (AEqualValue) getOut(id);
-                                System.out.println(getOut(adds.getL()).getClass());
+                                AEqualValue val = (AEqualValue) temp.get(adds.getL().toString());
+                                System.out.println(val.getValue().getClass());
+                                System.exit(0);
                                 // AValExpression val = (AValExpression) adds.getR();
                                 // System.out.println(val.getValue().getClass());
                             }else if(getOut(function.getStatement()) instanceof AStringValue){
@@ -166,14 +168,15 @@ public class myvisitor2 extends DepthFirstAdapter {
         LinkedList commaId1 = node.getCommaIdentifier();
         if(eqval1.size() != 0){
             AEqualValue val = (AEqualValue) eqval1.get(0);
-            setOut(node.getId(), val);
+            System.out.println(val);
+            temp.put(node.getId().toString(), val);
         }
         for(int i=0; i<commaId1.size(); i++){
             argument1 = (ACommaIdentifier) commaId1.get(i);
             eqval1 = argument1.getEqualValue();
             if (eqval1.size() != 0){
                 AEqualValue val = (AEqualValue) eqval1.get(0);
-                setOut(argument1.getId(), val);
+                temp.put(argument1.getId().toString(), val);
             }
         }
     }
