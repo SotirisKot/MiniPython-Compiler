@@ -242,6 +242,7 @@ public class myvisitor1 extends DepthFirstAdapter
 		String var_name = node.getId().toString();
 		if(!(variables_symtable.containsKey(var_name))){
 			variables_symtable.put(var_name,node);
+
 		}
 		// get the rest of the arguments
 		LinkedList list_arguments = node.getCommaIdentifier();
@@ -252,6 +253,7 @@ public class myvisitor1 extends DepthFirstAdapter
 			}
 		} 
 	}
+
 
 	public void outANumberValue(ANumberValue node){
 		setOut(node, new ANumberValue());
@@ -269,13 +271,10 @@ public class myvisitor1 extends DepthFirstAdapter
 	public void outAAdditionExpression(AAdditionExpression node){
 		PValue v1 = null; 
 		PValue v2 = null;
-
 		if(node.getL() instanceof AId2Expression){
+			//System.out.println(variables_symtable.get(node.getL().toString()).getClass());
 			if (variables_symtable.get(node.getL().toString()) instanceof AEqualsStatement){
 				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
-				v1 = (PValue) getOut(nodeEq);
-			}else if (variables_symtable.get(node.getL().toString()) instanceof AArgument){
-				AArgument nodeEq = (AArgument) variables_symtable.get(node.getL().toString());
 				v1 = (PValue) getOut(nodeEq);
 			}
 		}else{
@@ -285,8 +284,42 @@ public class myvisitor1 extends DepthFirstAdapter
 			if (variables_symtable.get(node.getR().toString()) instanceof AEqualsStatement){
 				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
 				v2 = (PValue) getOut(nodeEq);
-			}else if (variables_symtable.get(node.getR().toString()) instanceof AArgument){
-				AArgument nodeEq = (AArgument) variables_symtable.get(node.getR().toString());
+			}
+		}else{
+			v2 = (PValue) getOut(node.getR());
+		}
+
+		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
+			System.out.println("hey1");
+			System.out.println(" Error :: cannot add string with number.");
+		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
+
+			System.out.println("hey2");
+			System.out.println(" Error :: cannot add number with string.");
+		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
+			System.out.println("hey3");
+			setOut(node, new AStringValue());
+		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
+			System.out.println("hey4");
+			setOut(node, new ANumberValue());
+		}
+	}
+
+	public void outASubtractionExpression(ASubtractionExpression node){
+		PValue v1 = null; 
+		PValue v2 = null;
+		if(node.getL() instanceof AId2Expression){
+			//System.out.println(variables_symtable.get(node.getL().toString()).getClass());
+			if (variables_symtable.get(node.getL().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
+				v1 = (PValue) getOut(nodeEq);
+			}
+		}else{
+			v1 = (PValue) getOut(node.getL());
+		}
+		if(node.getR() instanceof AId2Expression){
+			if (variables_symtable.get(node.getR().toString()) instanceof AEqualsStatement){
+				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getR().toString());
 				v2 = (PValue) getOut(nodeEq);
 			}
 		}else{
@@ -294,12 +327,17 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
-			System.out.println(" Error :: cannot add string with number.");
+			System.out.println("hey1");
+			System.out.println(" Error :: cannot subtract string with number.");
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
-			System.out.println(" Error :: cannot add number with string.");
+
+			System.out.println("hey2");
+			System.out.println(" Error :: cannot subtract number with string.");
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
+			System.out.println("hey3");
 			setOut(node, new AStringValue());
 		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
+			System.out.println("hey4");
 			setOut(node, new ANumberValue());
 		}
 	}
