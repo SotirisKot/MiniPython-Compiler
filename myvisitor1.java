@@ -6,7 +6,7 @@ public class myvisitor1 extends DepthFirstAdapter
 {
 	private Hashtable functions_symtable; //hashtable for functions
 	private Hashtable variables_symtable; //hashtable for variables	
-	private Boolean loop = false; // ok kalo 8a htan na broume kati kalitero edw alla den h3era ti na kanw
+	private Boolean loop = false; //
 
 	myvisitor1(Hashtable variables_symtable, Hashtable functions_symtable) 
 	{
@@ -23,10 +23,11 @@ public class myvisitor1 extends DepthFirstAdapter
 	}
 	
 	//check if a function is already defined
+    //
 	public void inAFunction(AFunction node){
 		
 		String func_name = node.getId().toString();
-		int line = ((TId) node.getId()).getLine();
+		int line = node.getId().getLine();
 		
 		if(functions_symtable.containsKey(func_name)){
 			//Apo8hkeuoyme ta arguments tis synarthshs pou molis synanthse o compiler
@@ -41,7 +42,7 @@ public class myvisitor1 extends DepthFirstAdapter
 
 				if(node_arguments.size()==0){
 					System.out.println("Error : in line " + line + " function " + func_name + "is already defined. ");
-					return;
+					System.exit(0);
 				}
 				//
 				AArgument arg1 = (AArgument) node_arguments.get(0);
@@ -79,7 +80,7 @@ public class myvisitor1 extends DepthFirstAdapter
 				}
 				if (notDefault && commaId1.size() != 0 && !only_defaults && !only_non_defaults){
 					System.out.println("Error : in line " + line + ". A non default argument cannot follow a default one at function " + func_name);
-				 	return;
+				 	System.exit(0);
 				}
 				//
 				arg1 = (AArgument) node_arguments.get(0);
@@ -92,18 +93,17 @@ public class myvisitor1 extends DepthFirstAdapter
 				commaId2 = arg2.getCommaIdentifier();
 				//
 				if(equalv1.size() != 0 && equalv2.size() == 0 && commaId1.size() != 0 && commaId2.size() != 0){
-					System.out.println(func_name + "1");
-					System.out.println("Error : in line " + line + " function " + func_name + "non default");
-					return;
+					System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+					System.exit(0);
 				}else if(equalv2.size() != 0 && equalv1.size() == 0 && commaId1.size() != 0 && commaId2.size() != 0){
-					System.out.println("Error : in line " + line + " function " + func_name + "non default");
-			 		return;
+					System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+			 		System.exit(0);
 				}else if(equalv1.size() != 0 && equalv2.size() == 0 && commaId1.size() == 0 && commaId2.size() == 0){
-					System.out.println("Error : in line " + line + " function " + func_name + "non default");
-			 		return;
+					System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+			 		System.exit(0);
 				}else if(equalv1.size() == 0 && equalv2.size() != 0 && commaId1.size() == 0 && commaId2.size() == 0){
-					System.out.println("Error : in line " + line + " function " + func_name + "non default");
-			 		return;
+					System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+			 		System.exit(0);
 				}
 				//
 				if (commaId1.size() == commaId2.size()){
@@ -124,19 +124,18 @@ public class myvisitor1 extends DepthFirstAdapter
 
 						//
 						if(eqval1.size() != 0 && eqval2.size() == 0){
-							System.out.println("Error : in line " + line + " function " + func_name + "non default");
-			 				return;
+							System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+			 				System.exit(0);
 						}else if(eqval2.size() != 0 && eqval1.size() == 0){
-							System.out.println("ehehehheh2");
-							System.out.println("Error : in line " + line + " function " + func_name + "non default");
-			 				return;
+							System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+			 				System.exit(0);
 						}else{
 							already_defined = true;
 						}
 					}
 					if (already_defined){
 						System.out.println("Error : in line " + line + " function " + func_name + "is already defined. ");
-						return;
+						System.exit(0);
 					}
 				}else if (commaId1.size() > commaId2.size()){
 					//
@@ -155,8 +154,8 @@ public class myvisitor1 extends DepthFirstAdapter
 					}
 					//
 					if (hasDefault){
-						System.out.println("Error : in line " + line + " function " + func_name + "non default");
-			 			return;
+						System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+			 			System.exit(0);
 					}else{
 						functions_symtable.put(func_name,node);
 					}
@@ -177,8 +176,8 @@ public class myvisitor1 extends DepthFirstAdapter
 					}
 					//
 					if (hasDefault){
-						System.out.println("Error : in line " + line + " function " + func_name + "non default");
-			 			return;
+						System.out.println("Error : in line " + line + " function " + func_name + "." +"Repeated signature with a default/non default argument.");
+			 			System.exit(0);
 					}else{
 						functions_symtable.put(func_name,node);
 					}
@@ -218,7 +217,7 @@ public class myvisitor1 extends DepthFirstAdapter
 				}
 				if (notDefault && commaId2.size() != 0 && !only_defaults && !only_non_defaults){
 					System.out.println("Error : in line " + line + ". A non default argument cannot follow a default one at function " + func_name);
-				 	return;
+				 	System.exit(0);
 				}
 				functions_symtable.put(func_name,node);
 			}
@@ -228,10 +227,10 @@ public class myvisitor1 extends DepthFirstAdapter
 	//check if variable is not defined
 	public void inAId2Expression(AId2Expression node){
 		String var_name = node.getId().toString();
-		int line = ((TId)node.getId()).getLine();
+		int line = node.getId().getLine();
 		if(!variables_symtable.containsKey(var_name) && !loop){
 			System.out.println(" Error : in line " + line + " variable " + var_name + "is not defined. ");
-			return;
+			System.exit(0);
 		}else{
 			loop = false;
 		}
@@ -242,7 +241,6 @@ public class myvisitor1 extends DepthFirstAdapter
 		String var_name = node.getId().toString();
 		if(!(variables_symtable.containsKey(var_name))){
 			variables_symtable.put(var_name,node);
-
 		}
 		// get the rest of the arguments
 		LinkedList list_arguments = node.getCommaIdentifier();
@@ -253,7 +251,6 @@ public class myvisitor1 extends DepthFirstAdapter
 			}
 		} 
 	}
-
 
 	public void outANumberValue(ANumberValue node){
 		setOut(node, new ANumberValue());
@@ -272,7 +269,6 @@ public class myvisitor1 extends DepthFirstAdapter
 		PValue v1 = null; 
 		PValue v2 = null;
 		if(node.getL() instanceof AId2Expression){
-			//System.out.println(variables_symtable.get(node.getL().toString()).getClass());
 			if (variables_symtable.get(node.getL().toString()) instanceof AEqualsStatement){
 				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
 				v1 = (PValue) getOut(nodeEq);
@@ -290,17 +286,14 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
-			System.out.println("hey1");
 			System.out.println(" Error :: cannot add string with number.");
+			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
-
-			System.out.println("hey2");
 			System.out.println(" Error :: cannot add number with string.");
+			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
-			System.out.println("hey3");
 			setOut(node, new AStringValue());
 		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
-			System.out.println("hey4");
 			setOut(node, new ANumberValue());
 		}
 	}
@@ -309,7 +302,6 @@ public class myvisitor1 extends DepthFirstAdapter
 		PValue v1 = null; 
 		PValue v2 = null;
 		if(node.getL() instanceof AId2Expression){
-			//System.out.println(variables_symtable.get(node.getL().toString()).getClass());
 			if (variables_symtable.get(node.getL().toString()) instanceof AEqualsStatement){
 				AEqualsStatement nodeEq = (AEqualsStatement) variables_symtable.get(node.getL().toString());
 				v1 = (PValue) getOut(nodeEq);
@@ -327,17 +319,14 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
-			System.out.println("hey1");
 			System.out.println(" Error :: cannot subtract string with number.");
+			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
-
-			System.out.println("hey2");
 			System.out.println(" Error :: cannot subtract number with string.");
+			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
-			System.out.println("hey3");
 			setOut(node, new AStringValue());
 		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
-			System.out.println("hey4");
 			setOut(node, new ANumberValue());
 		}
 	}
@@ -370,8 +359,10 @@ public class myvisitor1 extends DepthFirstAdapter
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
 			System.out.println(" Error :: cannot divide string with number.");
+			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
 			System.out.println(" Error :: cannot divide number with string.");
+			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
 			setOut(node, new AStringValue());
 		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
@@ -407,8 +398,10 @@ public class myvisitor1 extends DepthFirstAdapter
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
 			System.out.println(" Error :: cannot use power with: string and number.");
+			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
 			System.out.println(" Error ::cannot use power with: number and string.");
+			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
 			setOut(node, new AStringValue());
 		}else if (v1 instanceof ANumberValue && v2 instanceof ANumberValue){
@@ -424,7 +417,9 @@ public class myvisitor1 extends DepthFirstAdapter
 
 	public void inAEqualsStatement(AEqualsStatement node) {
 		String varName = node.getId().toString();
-		variables_symtable.put(varName, node);
+		if (!(variables_symtable.containsKey(varName))){
+			variables_symtable.put(varName, node);
+		}
 	}
 
 	public void inAForStatement(AForStatement node) {

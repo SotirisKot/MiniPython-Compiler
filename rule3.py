@@ -1,4 +1,5 @@
-def add(x='ho',y=1):
+# k='hey'
+def add(x,y=1):
    return x + y
-
-print 1 - add()
+k = 'hello'
+print add(1,k)

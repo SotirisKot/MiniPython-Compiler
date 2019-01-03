@@ -1,8 +1,12 @@
 def foo():
     print x
-    
+
 def pepe(y):
     return s
+
+def add(x,y):
+   return x + y
+print k
 
 k = 2
 def lol():
@@ -11,6 +15,7 @@ def lol():
 assert z == k
 z = 1
 a=2
+# v = 2
 
 for hel in v:
     print hel
