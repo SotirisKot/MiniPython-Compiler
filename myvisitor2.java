@@ -17,6 +17,7 @@ public class myvisitor2 extends DepthFirstAdapter {
     public void outAFunctionCall(AFunctionCall node){
         String func_name = node.getId().toString();
         int line = ((TId) node.getId()).getLine();
+
         if(functions_symtable.containsKey(func_name)){
             //
             LinkedList args_func_call = node.getArglist();
@@ -32,6 +33,7 @@ public class myvisitor2 extends DepthFirstAdapter {
                 }else{
                     // TODO do something with 4th or 5th rule
                     if(getOut(function.getStatement()) instanceof AAdditionExpression){
+
                         AAdditionExpression adds = (AAdditionExpression) getOut(function.getStatement());
                         AEqualsStatement eq1 = (AEqualsStatement) variables_symtable.get(adds.getL().toString());
                         AEqualsStatement eq2 = (AEqualsStatement) variables_symtable.get(adds.getR().toString());
@@ -105,6 +107,10 @@ public class myvisitor2 extends DepthFirstAdapter {
                     }else if(getOut(function.getStatement()) instanceof ANumberValue){
                         ANumberValue num = (ANumberValue) getOut(function.getStatement());
                         setOut(node, num);
+                    }else if(getOut(function.getStatement()) instanceof AId2Expression){
+                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(function.getStatement().toString());
+                        PValue v1 = (PValue) getOut(eq);
+                        setOut(node, v1);
                     }
                 }
             }else{
@@ -143,14 +149,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                         PValue v1;
                         PValue v2;
                         if(!temp.containsKey(adds.getL().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getL().toString());
-                            v1 = (PValue) getOut(eq);
+                            if(adds.getL() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) adds.getL();
+                                v1 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getL().toString());
+                                v1 = (PValue) getOut(eq);
+                            }     
                         }else{
                             v1 = (PValue) temp.get(adds.getL().toString());
                         }
                         if(!temp.containsKey(adds.getR().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getR().toString());
-                            v2 = (PValue) getOut(eq);
+                            if(adds.getR() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) adds.getR();
+                                v2 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getR().toString());
+                                v2 = (PValue) getOut(eq);
+                            }
                         }else{
                             v2 = (PValue) temp.get(adds.getR().toString());
                         }
@@ -173,14 +189,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                         PValue v1;
                         PValue v2;
                         if(!temp.containsKey(divs.getL().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getL().toString());
-                            v1 = (PValue) getOut(eq);
+                            if(divs.getL() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) divs.getL();
+                                v1 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getL().toString());
+                                v1 = (PValue) getOut(eq);
+                            }
                         }else{
                             v1 = (PValue) temp.get(divs.getL().toString());
                         }
                         if(!temp.containsKey(divs.getR().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getR().toString());
-                            v2 = (PValue) getOut(eq);
+                            if(divs.getR() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) divs.getR();
+                                v2 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getR().toString());
+                                v2 = (PValue) getOut(eq);
+                            }
                         }else{
                             v2 = (PValue) temp.get(divs.getR().toString());
                         }
@@ -203,14 +229,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                         PValue v1;
                         PValue v2;
                         if(!temp.containsKey(subs.getL().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getL().toString());
-                            v1 = (PValue) getOut(eq);
+                            if(subs.getL() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) subs.getL();
+                                v1 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getL().toString());
+                                v1 = (PValue) getOut(eq);
+                            }
                         }else{
                             v1 = (PValue) temp.get(subs.getL().toString());
                         }
                         if(!temp.containsKey(subs.getR().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getR().toString());
-                            v2 = (PValue) getOut(eq);
+                            if(subs.getR() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) subs.getR();
+                                v2 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getR().toString());
+                                v2 = (PValue) getOut(eq);
+                            }
                         }else{
                             v2 = (PValue) temp.get(subs.getR().toString());
                         }
@@ -233,14 +269,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                         PValue v1;
                         PValue v2;
                         if(!temp.containsKey(power.getL().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getL().toString());
-                            v1 = (PValue) getOut(eq);
+                            if(power.getL() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) power.getL();
+                                v1 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getL().toString());
+                                v1 = (PValue) getOut(eq);
+                            }
                         }else{
                             v1 = (PValue) temp.get(power.getL().toString());
                         }
                         if(!temp.containsKey(power.getR().toString())){
-                            AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getR().toString());
-                            v2 = (PValue) getOut(eq);
+                            if(power.getR() instanceof AValExpression){
+                                AValExpression valExp = (AValExpression) power.getR();
+                                v2 = (PValue) valExp.getValue();
+                            }else{
+                                AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getR().toString());
+                                v2 = (PValue) getOut(eq);
+                            }
                         }else{
                             v2 = (PValue) temp.get(power.getR().toString());
                         }
@@ -312,14 +358,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(adds.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(adds.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) adds.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }     
                                 }else{
                                     v1 = (PValue) temp.get(adds.getL().toString());
                                 }
                                 if(!temp.containsKey(adds.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(adds.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) adds.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(adds.getR().toString());
                                 }
@@ -342,14 +398,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(divs.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(divs.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) divs.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v1 = (PValue) temp.get(divs.getL().toString());
                                 }
                                 if(!temp.containsKey(divs.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(divs.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) divs.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(divs.getR().toString());
                                 }
@@ -372,14 +438,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(subs.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(subs.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) subs.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v1 = (PValue) temp.get(subs.getL().toString());
                                 }
                                 if(!temp.containsKey(subs.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(subs.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) subs.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(subs.getR().toString());
                                 }
@@ -402,14 +478,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(power.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(power.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) power.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v1 = (PValue) temp.get(power.getL().toString());
                                 }
                                 if(!temp.containsKey(power.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(power.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) power.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(power.getR().toString());
                                 }
@@ -453,6 +539,7 @@ public class myvisitor2 extends DepthFirstAdapter {
                             LinkedList rest_args = args.getCommaExpression();
                             //
                             if(args.getExpression() instanceof AId2Expression){
+                                System.out.println("geia");
                                 AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(args.getExpression().toString());
                                 PValue v1 = (PValue) getOut(eq);
                                 temp.put(first_arg.toString(), v1);
@@ -479,18 +566,28 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(adds.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(adds.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) adds.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }     
                                 }else{
                                     v1 = (PValue) temp.get(adds.getL().toString());
                                 }
                                 if(!temp.containsKey(adds.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(adds.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) adds.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(adds.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(adds.getR().toString());
                                 }
-                                
+
                                 if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
                                     System.out.println(" Error :: cannot add string with number.");
                                     System.exit(0);
@@ -509,14 +606,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(divs.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(divs.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) divs.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v1 = (PValue) temp.get(divs.getL().toString());
                                 }
                                 if(!temp.containsKey(divs.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(divs.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) divs.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(divs.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(divs.getR().toString());
                                 }
@@ -539,14 +646,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(subs.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(subs.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) subs.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v1 = (PValue) temp.get(subs.getL().toString());
                                 }
                                 if(!temp.containsKey(subs.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(subs.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) subs.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(subs.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(subs.getR().toString());
                                 }
@@ -569,14 +686,24 @@ public class myvisitor2 extends DepthFirstAdapter {
                                 PValue v1;
                                 PValue v2;
                                 if(!temp.containsKey(power.getL().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getL().toString());
-                                    v1 = (PValue) getOut(eq);
+                                    if(power.getL() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) power.getL();
+                                        v1 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getL().toString());
+                                        v1 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v1 = (PValue) temp.get(power.getL().toString());
                                 }
                                 if(!temp.containsKey(power.getR().toString())){
-                                    AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getR().toString());
-                                    v2 = (PValue) getOut(eq);
+                                    if(power.getR() instanceof AValExpression){
+                                        AValExpression valExp = (AValExpression) power.getR();
+                                        v2 = (PValue) valExp.getValue();
+                                    }else{
+                                        AEqualsStatement eq = (AEqualsStatement) variables_symtable.get(power.getR().toString());
+                                        v2 = (PValue) getOut(eq);
+                                    }
                                 }else{
                                     v2 = (PValue) temp.get(power.getR().toString());
                                 }
