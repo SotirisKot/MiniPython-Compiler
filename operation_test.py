@@ -1,7 +1,7 @@
 x = "hello world"
 print x + 2
 
-a = 1 + 2
+a = 1
 y =  a + 'ho'
 
 z = 1 + 'heyy'

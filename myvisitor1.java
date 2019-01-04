@@ -253,7 +253,7 @@ public class myvisitor1 extends DepthFirstAdapter
 	}
 
 	public void outANumberValue(ANumberValue node){
-		setOut(node, new ANumberValue());
+		setOut(node, node);
 	}
 
 	public void outAValExpression(AValExpression node){
@@ -262,7 +262,7 @@ public class myvisitor1 extends DepthFirstAdapter
 	}
 
 	public void outAStringValue(AStringValue node){
-		setOut(node, new AStringValue());
+		setOut(node, node);
 	}
 
 	public void outAAdditionExpression(AAdditionExpression node){
@@ -286,10 +286,10 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
-			System.out.println(" Error :: cannot add string with number.");
+			System.out.println(" Error :: cannot add string: "+ v1 +"with number:" + v2);
 			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
-			System.out.println(" Error :: cannot add number with string.");
+			System.out.println(" Error :: cannot add number: "+ v1 +"with string:" + v2);
 			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
 			setOut(node, new AStringValue());
@@ -319,10 +319,10 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
-			System.out.println(" Error :: cannot subtract string with number.");
+			System.out.println(" Error :: cannot subtract string: "+ v1 +"with number: " + v2);
 			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
-			System.out.println(" Error :: cannot subtract number with string.");
+			System.out.println(" Error :: cannot subtract number: "+ v1 +"with string: " + v2);
 			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
 			setOut(node, new AStringValue());
@@ -358,10 +358,10 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
-			System.out.println(" Error :: cannot divide string with number.");
+			System.out.println(" Error :: cannot divide string: "+ v1 +"with number: " + v2);
 			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
-			System.out.println(" Error :: cannot divide number with string.");
+			System.out.println(" Error :: cannot divide number: "+ v1 + "with string: "+ v2);
 			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
 			setOut(node, new AStringValue());
@@ -397,10 +397,10 @@ public class myvisitor1 extends DepthFirstAdapter
 		}
 
 		if (v1 instanceof AStringValue && v2 instanceof ANumberValue){
-			System.out.println(" Error :: cannot use power with: string and number.");
+			System.out.println(" Error :: cannot use power with: string: "+ v1 + "and number: " + v2);
 			System.exit(0);
 		}else if(v1 instanceof ANumberValue && v2 instanceof AStringValue){
-			System.out.println(" Error ::cannot use power with: number and string.");
+			System.out.println(" Error ::cannot use power with: number: " + v1 +" and string: " + v2);
 			System.exit(0);
 		}else if (v1 instanceof AStringValue && v2 instanceof AStringValue){
 			setOut(node, new AStringValue());
